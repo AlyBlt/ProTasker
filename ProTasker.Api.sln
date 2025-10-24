@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36603.0 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProTasker.Api", "ProTasker.Api\ProTasker.Api.csproj", "{6C80F4BB-BC43-4C5E-97CE-25A275BBF54D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6C80F4BB-BC43-4C5E-97CE-25A275BBF54D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C80F4BB-BC43-4C5E-97CE-25A275BBF54D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C80F4BB-BC43-4C5E-97CE-25A275BBF54D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C80F4BB-BC43-4C5E-97CE-25A275BBF54D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AA2AC58B-3649-450F-AD0A-D9BACE5C45EF}
+	EndGlobalSection
+EndGlobal
