@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ProTasker.Domain.Entities
 {
-    internal class User
+    public class User
     {
         public Guid Id { get; set; }  // Unique identifier
         public string FirstName { get; set; } = string.Empty;
@@ -15,6 +15,9 @@ namespace ProTasker.Domain.Entities
         public string PasswordHash { get; set; } = string.Empty;
 
         // Navigational properties
-        public ICollection<Task> Tasks { get; set; } = new List<Task>();
+        public ICollection<ProjectTask> Tasks { get; set; } = new List<ProjectTask>();
+
+        public ICollection<TaskHistory> TaskHistories { get; set; } = new List<TaskHistory>();
+        public ICollection<Team> Teams { get; set; } = new List<Team>();
     }
 }

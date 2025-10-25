@@ -7,17 +7,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.10">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
     <Folder Include="Middlewares\" />
     <Folder Include="Extensions\" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ProTasker.Application\ProTasker.Application.csproj" />
+    <ProjectReference Include="..\ProTasker.Domain\ProTasker.Domain.csproj" />
     <ProjectReference Include="..\ProTasker.Infrastructure\ProTasker.Infrastructure.csproj" />
   </ItemGroup>
 
