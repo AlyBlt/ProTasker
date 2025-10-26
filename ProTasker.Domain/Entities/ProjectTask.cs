@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ProTasker.Domain.Enums;
+
 
 
 namespace ProTasker.Domain.Entities
@@ -14,18 +16,17 @@ namespace ProTasker.Domain.Entities
         public string Description { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? DueDate { get; set; }
-        public bool IsCompleted { get; set; } = false;
+        public ProjectTaskStatus Status { get; set; }=ProjectTaskStatus.Todo;
 
         // Foreign keys
         public Guid? AssignedUserId { get; set; }
-        public User? AssignedUser { get; set; }
+        public User? AssignedUser { get; set; }  //who is resposible for the job
 
-        public Guid? TeamId { get; set; }
-        public Team? Team { get; set; } = null!;
+        public Guid TeamId { get; set; } //can not be null
+        public Team Team { get; set; } = null!;
 
         public ICollection<TaskHistory> Histories { get; set; } = new List<TaskHistory>();
         
         
-        //public ICollection<ProjectTask> Tasks { get; set; } = new List<ProjectTask>();
     }
 }

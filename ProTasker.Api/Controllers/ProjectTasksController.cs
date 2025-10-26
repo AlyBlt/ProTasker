@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using ProTasker.Application.Services;
-using ProTasker.Application.Interfaces;
-using ProTasker.Domain.Entities;
-using AutoMapper;
 using ProTasker.Application.DTOs;
+using ProTasker.Application.Helpers;
+using ProTasker.Application.Interfaces;
+using ProTasker.Application.Services;
+using ProTasker.Domain.Entities;
 
 namespace ProTasker.Api.Controllers
 {
@@ -40,6 +41,15 @@ namespace ProTasker.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] ProjectTaskDTO taskDto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            //-----------mapping profile'a alındı---------------
+            //taskDto.Title = StringHelpers.CapitalizeWords(taskDto.Title);
+            //taskDto.AssignedUserName = StringHelpers.CapitalizeWords(taskDto.AssignedUserName);
+            //taskDto.TeamName = StringHelpers.CapitalizeWords(taskDto.TeamName);
+            //taskDto.Description = StringHelpers.Capitalize(taskDto.Description);
+
             var task = _mapper.Map<ProjectTask>(taskDto);   // DTO -> Entity
             await _service.AddTaskAsync(task);     // Entity repository’ye gidiyor
             var createdtaskDto = _mapper.Map<ProjectTaskDTO>(task); // Entity -> DTO
@@ -52,6 +62,12 @@ namespace ProTasker.Api.Controllers
         {
             var task = await _service.GetTaskByIdAsync(id);
             if (task == null) return NotFound();
+
+            //taskDto.Title = StringHelpers.CapitalizeWords(taskDto.Title);
+            //taskDto.AssignedUserName = StringHelpers.CapitalizeWords(taskDto.AssignedUserName);
+            //taskDto.TeamName = StringHelpers.CapitalizeWords(taskDto.TeamName);
+            //taskDto.Description = StringHelpers.Capitalize(taskDto.Description);
+
             task.Id = id; // Id'yi koruyoruz
             _mapper.Map(taskDto, task); // DTO -> Entity dönüşümü
             await _service.UpdateTaskAsync(task);

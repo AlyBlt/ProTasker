@@ -12,7 +12,7 @@ using ProTasker.Infrastructure.Data;
 namespace ProTasker.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251024173404_InitialCreate")]
+    [Migration("20251026204958_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -31,7 +31,7 @@ namespace ProTasker.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("AssignedUserId")
+                    b.Property<Guid?>("AssignedUserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
@@ -44,8 +44,9 @@ namespace ProTasker.Infrastructure.Migrations
                     b.Property<DateTime?>("DueDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsCompleted")
-                        .HasColumnType("bit");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("TeamId")
                         .HasColumnType("uniqueidentifier");
@@ -54,18 +55,25 @@ namespace ProTasker.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.HasIndex("AssignedUserId");
 
                     b.HasIndex("TeamId");
 
-                    b.HasIndex("UserId");
-
                     b.ToTable("Tasks");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
+                            AssignedUserId = new Guid("33333333-3333-3333-3333-333333333333"),
+                            CreatedAt = new DateTime(2025, 10, 26, 12, 0, 0, 0, DateTimeKind.Unspecified),
+                            Description = "Initialize project repository and structure",
+                            Status = "Todo",
+                            TeamId = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+                            Title = "Setup Project"
+                        });
                 });
 
             modelBuilder.Entity("ProTasker.Domain.Entities.TaskHistory", b =>
@@ -78,13 +86,19 @@ namespace ProTasker.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("ActionDate")
+                    b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("PerformedByUserId")
+                    b.Property<string>("NewValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OldValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("PerformedByUserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("TaskId")
+                    b.Property<Guid?>("TaskId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -94,6 +108,16 @@ namespace ProTasker.Infrastructure.Migrations
                     b.HasIndex("TaskId");
 
                     b.ToTable("TaskHistories");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("cccccccc-cccc-cccc-cccc-cccccccccccc"),
+                            Action = "Created",
+                            CreatedAt = new DateTime(2025, 10, 26, 12, 0, 0, 0, DateTimeKind.Unspecified),
+                            PerformedByUserId = new Guid("33333333-3333-3333-3333-333333333333"),
+                            TaskId = new Guid("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb")
+                        });
                 });
 
             modelBuilder.Entity("ProTasker.Domain.Entities.Team", b =>
@@ -102,13 +126,31 @@ namespace ProTasker.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("LeaderId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("LeaderId");
+
                     b.ToTable("Teams");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+                            Description = "First Team",
+                            LeaderId = new Guid("22222222-2222-2222-2222-222222222222"),
+                            Name = "Alpha Team"
+                        });
                 });
 
             modelBuilder.Entity("ProTasker.Domain.Entities.User", b =>
@@ -121,45 +163,66 @@ namespace ProTasker.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Role")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("TeamId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("TeamId");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111111"),
+                            Email = "admin@protasker.com",
+                            PasswordHash = "hashedpassword",
+                            Role = "Admin",
+                            UserName = "admin"
+                        },
+                        new
+                        {
+                            Id = new Guid("22222222-2222-2222-2222-222222222222"),
+                            Email = "teamleader@protasker.com",
+                            PasswordHash = "hashedpassword",
+                            Role = "TeamLeader",
+                            UserName = "teamleader"
+                        },
+                        new
+                        {
+                            Id = new Guid("33333333-3333-3333-3333-333333333333"),
+                            Email = "member@protasker.com",
+                            PasswordHash = "hashedpassword",
+                            Role = "Member",
+                            UserName = "member"
+                        });
                 });
 
             modelBuilder.Entity("ProTasker.Domain.Entities.ProjectTask", b =>
                 {
                     b.HasOne("ProTasker.Domain.Entities.User", "AssignedUser")
-                        .WithMany()
+                        .WithMany("Tasks")
                         .HasForeignKey("AssignedUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("ProTasker.Domain.Entities.Team", "Team")
                         .WithMany("Tasks")
                         .HasForeignKey("TeamId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("ProTasker.Domain.Entities.User", null)
-                        .WithMany("Tasks")
-                        .HasForeignKey("UserId");
 
                     b.Navigation("AssignedUser");
 
@@ -169,27 +232,39 @@ namespace ProTasker.Infrastructure.Migrations
             modelBuilder.Entity("ProTasker.Domain.Entities.TaskHistory", b =>
                 {
                     b.HasOne("ProTasker.Domain.Entities.User", "PerformedByUser")
-                        .WithMany()
+                        .WithMany("TaskHistories")
                         .HasForeignKey("PerformedByUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("ProTasker.Domain.Entities.ProjectTask", "Task")
                         .WithMany("Histories")
                         .HasForeignKey("TaskId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("PerformedByUser");
 
                     b.Navigation("Task");
                 });
 
+            modelBuilder.Entity("ProTasker.Domain.Entities.Team", b =>
+                {
+                    b.HasOne("ProTasker.Domain.Entities.User", "Leader")
+                        .WithMany()
+                        .HasForeignKey("LeaderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Leader");
+                });
+
             modelBuilder.Entity("ProTasker.Domain.Entities.User", b =>
                 {
-                    b.HasOne("ProTasker.Domain.Entities.Team", null)
+                    b.HasOne("ProTasker.Domain.Entities.Team", "Team")
                         .WithMany("Members")
-                        .HasForeignKey("TeamId");
+                        .HasForeignKey("TeamId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Team");
                 });
 
             modelBuilder.Entity("ProTasker.Domain.Entities.ProjectTask", b =>
@@ -206,6 +281,8 @@ namespace ProTasker.Infrastructure.Migrations
 
             modelBuilder.Entity("ProTasker.Domain.Entities.User", b =>
                 {
+                    b.Navigation("TaskHistories");
+
                     b.Navigation("Tasks");
                 });
 #pragma warning restore 612, 618

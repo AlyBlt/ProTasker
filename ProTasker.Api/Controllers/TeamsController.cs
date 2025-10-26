@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProTasker.Application.DTOs;
+using ProTasker.Application.Helpers;
 using ProTasker.Application.Interfaces;
 using ProTasker.Application.Services;
 using ProTasker.Domain.Entities;
@@ -42,6 +43,11 @@ namespace ProTasker.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] TeamDTO teamDto)
         {
+            //-----------mapping profile'a alındı---------------
+            //teamDto.Name = StringHelpers.CapitalizeWords(teamDto.Name);
+            //teamDto.LeaderName = StringHelpers.CapitalizeWords(teamDto.LeaderName);
+            //teamDto.Description = StringHelpers.Capitalize(teamDto.Description);
+
             var team = _mapper.Map<Team>(teamDto); // DTO -> Entity dönüşümü
             await _service.AddTeamAsync(team);
             var createdTeamDto = _mapper.Map<TeamDTO>(team); // Entity -> DTO dönüşümü
@@ -53,12 +59,16 @@ namespace ProTasker.Api.Controllers
         {
             var team = await _service.GetTeamByIdAsync(id);
             if (team == null) return NotFound();
+
+            //teamDto.Name = StringHelpers.CapitalizeWords(teamDto.Name);
+            //teamDto.LeaderName = StringHelpers.CapitalizeWords(teamDto.LeaderName);
+            //teamDto.Description = StringHelpers.Capitalize(teamDto.Description);
+
             team.Id = id; // Id'yi koruyoruz         
             _mapper.Map(teamDto, team); // DTO -> Entity dönüşümü
             await _service.UpdateTeamAsync(team);
             return NoContent();
 
-            
         }
 
         [HttpDelete("{id}")]

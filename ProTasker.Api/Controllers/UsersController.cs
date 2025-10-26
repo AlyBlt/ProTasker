@@ -6,6 +6,7 @@ using ProTasker.Application.Interfaces;
 using ProTasker.Application.Services;
 using ProTasker.Domain.Entities;
 using System.Threading.Tasks;
+using ProTasker.Application.Helpers;
 
 namespace ProTasker.Api.Controllers
 {
@@ -42,6 +43,10 @@ namespace ProTasker.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(UserDTO userDto)
         {
+            //-----------mapping profile'a alındı---------------
+            //userDto.UserName = StringHelpers.CapitalizeWords(userDto.UserName);
+            //userDto.TeamName = StringHelpers.CapitalizeWords(userDto.TeamName);
+
             var user = _mapper.Map<User>(userDto);   // DTO -> Entity
             await _service.AddUserAsync(user);       // Entity repository’ye gidiyor
             var createdUserDto = _mapper.Map<UserDTO>(user); // Entity -> DTO
@@ -54,6 +59,10 @@ namespace ProTasker.Api.Controllers
             var user = await _service.GetUserByIdAsync(id);
             if (user == null) return NotFound();
             user.Id = id; // Id'yi koruyoruz
+
+            //userDto.UserName = StringHelpers.CapitalizeWords(userDto.UserName);
+            //userDto.TeamName = StringHelpers.CapitalizeWords(userDto.TeamName);
+
             _mapper.Map(userDto, user); //// sadece var olan entity üzerine map et
             await _service.UpdateUserAsync(user);
             return NoContent();

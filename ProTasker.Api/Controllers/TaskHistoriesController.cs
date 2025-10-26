@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProTasker.Application.DTOs;
+using ProTasker.Application.Helpers;
 using ProTasker.Application.Interfaces;
 using ProTasker.Domain.Entities;
 using System.Threading.Tasks;
@@ -46,6 +47,9 @@ namespace ProTasker.Api.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
+            //-----------mapping profile'a alındı---------------
+            //historyDto.PerformedByUserName = StringHelpers.CapitalizeWords(historyDto.PerformedByUserName);
+         
             var history = _mapper.Map<TaskHistory>(historyDto); // DTO -> Entity dönüşümü
             await _service.AddHistoryAsync(history);
             var createdHistoryDto = _mapper.Map<TaskHistoryDTO>(history); // Entity -> DTO dönüşümü
@@ -60,6 +64,9 @@ namespace ProTasker.Api.Controllers
             var history = await _service.GetHistoryByIdAsync(id);
             if (history == null) return NotFound();
             history.Id = id;
+
+           //historyDto.PerformedByUserName = StringHelpers.CapitalizeWords(historyDto.PerformedByUserName);
+
             _mapper.Map(historyDto, history); // DTO -> Entity dönüşümü
             await _service.UpdateHistoryAsync(history);
             return NoContent();

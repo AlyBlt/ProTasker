@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ProTasker.Domain.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,12 +14,9 @@ namespace ProTasker.Application.DTOs
         public string Description { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
         public DateTime? DueDate { get; set; }
-        public bool IsCompleted { get; set; }
+        public ProjectTaskStatus Status { get; set; } = ProjectTaskStatus.Todo;
 
-        public Guid? AssignedUserId { get; set; }
         public string? AssignedUserName { get; set; }
-
-        public Guid TeamId { get; set; }
         public string? TeamName { get; set; }
     }
 }

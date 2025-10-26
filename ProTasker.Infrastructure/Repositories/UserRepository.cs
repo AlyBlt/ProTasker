@@ -7,6 +7,7 @@ using ProTasker.Domain.Entities;
 using ProTasker.Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using ProTasker.Infrastructure.Data; // DbContext için
+using ProTasker.Domain.Enums;
 
 namespace ProTasker.Infrastructure.Repositories
 {
@@ -22,12 +23,12 @@ namespace ProTasker.Infrastructure.Repositories
         public async Task<List<User>> GetAllAsync() => await _context.Users
             .Include(u => u.Tasks)
             .Include(u => u.TaskHistories)
-            .Include(u => u.Teams)
+            .Include(u => u.Team)
             .ToListAsync();
         public async Task<User?> GetByIdAsync(Guid id) => await _context.Users
             .Include(u => u.Tasks)
             .Include(u => u.TaskHistories)
-            .Include(u => u.Teams)
+            .Include(u => u.Team)
             .FirstOrDefaultAsync(u => u.Id == id);
         public async Task AddAsync(User user)
         {
