@@ -1,6 +1,6 @@
-﻿using ProTasker.Application.Interfaces;
+﻿using ProTasker.Application.Interfaces.Repositories;
+using ProTasker.Application.Interfaces.Services;
 using ProTasker.Domain.Entities;
-using ProTasker.Infrastructure.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,14 +20,14 @@ namespace ProTasker.Application.Services
             _repository = repository;
         }
 
-        public Task<List<Team>> GetAllTeamsAsync() => _repository.GetAllAsync();
+        public Task<IEnumerable<Team>> GetAllAsync() => _repository.GetAllAsync();
 
-        public Task<Team?> GetTeamByIdAsync(Guid id) => _repository.GetByIdAsync(id);
+        public Task<Team?> GetByIdAsync(Guid id) => _repository.GetByIdAsync(id);
 
-        public Task AddTeamAsync(Team team) => _repository.AddAsync(team);
+        public Task AddAsync(Team team) => _repository.AddAsync(team);
 
-        public Task UpdateTeamAsync(Team team) => _repository.UpdateAsync(team);
+        public Task UpdateAsync(Team team) => _repository.UpdateAsync(team);
 
-        public Task DeleteTeamAsync(Guid id) => _repository.DeleteAsync(id);
+        public Task<bool> DeleteAsync(Guid id) => _repository.DeleteAsync(id);
     }
 }

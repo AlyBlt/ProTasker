@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProTasker.Application.DTOs;
 using ProTasker.Application.Helpers;
-using ProTasker.Application.Interfaces;
+using ProTasker.Application.Interfaces.Services;
 using ProTasker.Application.Services;
 using ProTasker.Domain.Entities;
 
@@ -22,64 +22,66 @@ namespace ProTasker.Api.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll()
         {
-            var tasks = await _service.GetAllTasksAsync();
-            var taskDtos = _mapper.Map<IEnumerable<ProjectTaskDTO>>(tasks); // Entity -> DTO dönüşümü
+            var tasks = await _service.GetAllAsync();
+            var taskDtos = _mapper.Map<IEnumerable<ProjectTaskDTO>>(tasks); // Entity -> DTO 
             return Ok(taskDtos);
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(Guid id)
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
-            var task = await _service.GetTaskByIdAsync(id);
-            if (task == null) return NotFound();
+            var task = await _service.GetByIdAsync(id);
+            if (task == null) return NotFound(new { Message = "The project task with the provided Id could not be found." });
             var taskDto = _mapper.Map<ProjectTaskDTO>(task);
             return Ok(taskDto);
         }
 
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [Consumes("application/json")]
         public async Task<IActionResult> Create([FromBody] ProjectTaskDTO taskDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            //-----------mapping profile'a alındı---------------
-            //taskDto.Title = StringHelpers.CapitalizeWords(taskDto.Title);
-            //taskDto.AssignedUserName = StringHelpers.CapitalizeWords(taskDto.AssignedUserName);
-            //taskDto.TeamName = StringHelpers.CapitalizeWords(taskDto.TeamName);
-            //taskDto.Description = StringHelpers.Capitalize(taskDto.Description);
-
-            var task = _mapper.Map<ProjectTask>(taskDto);   // DTO -> Entity
-            await _service.AddTaskAsync(task);     // Entity repository’ye gidiyor
-            var createdtaskDto = _mapper.Map<ProjectTaskDTO>(task); // Entity -> DTO
-            return CreatedAtAction(nameof(GetById), new { id = createdtaskDto.Id }, createdtaskDto);
-
+            var task = _mapper.Map<ProjectTask>(taskDto); // DTO -> Entity
+            await _service.AddAsync(task); 
+            var createdTaskDto = _mapper.Map<ProjectTaskDTO>(task); // Entity -> DTO
+            return CreatedAtAction(nameof(GetById), new { id = createdTaskDto.Id }, createdTaskDto);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] ProjectTaskDTO taskDto)
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [Consumes("application/json")]
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] ProjectTaskDTO taskDto)
         {
-            var task = await _service.GetTaskByIdAsync(id);
-            if (task == null) return NotFound();
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-            //taskDto.Title = StringHelpers.CapitalizeWords(taskDto.Title);
-            //taskDto.AssignedUserName = StringHelpers.CapitalizeWords(taskDto.AssignedUserName);
-            //taskDto.TeamName = StringHelpers.CapitalizeWords(taskDto.TeamName);
-            //taskDto.Description = StringHelpers.Capitalize(taskDto.Description);
+            var task = await _service.GetByIdAsync(id);
+            if (task == null) return NotFound(new { Message = "The project task with the provided Id could not be found." });
 
-            task.Id = id; // Id'yi koruyoruz
+            task.Id = id; // Preserve the existing Id
             _mapper.Map(taskDto, task); // DTO -> Entity dönüşümü
-            await _service.UpdateTaskAsync(task);
+            await _service.UpdateAsync(task); 
             return NoContent();
         }
 
+
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(Guid id)
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
-            var task = await _service.GetTaskByIdAsync(id);
-            if (task == null) return NotFound();
-            await _service.DeleteTaskAsync(id);
+            var deleted = await _service.DeleteAsync(id); 
+            if (!deleted)
+                return NotFound(new { Message = $"Project task with Id {id} could not be deleted because it does not exist." });
             return NoContent();
         }
     }

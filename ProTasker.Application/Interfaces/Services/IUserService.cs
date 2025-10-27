@@ -4,18 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ProTasker.Domain.Entities;
+using ProTasker.Application.DTOs;
 
-
-namespace ProTasker.Application.Interfaces
+namespace ProTasker.Application.Interfaces.Services
 {
-    public interface IUserRepository
+    public interface IUserService
     {
-        Task<List<User>> GetAllAsync();
+        Task<IEnumerable<User>> GetAllAsync();
         Task<User?> GetByIdAsync(Guid id);
         Task AddAsync(User user);
         Task UpdateAsync(User user);
-        Task DeleteAsync(Guid id);
+        Task<bool> DeleteAsync(Guid id);
     }
 }
-
-

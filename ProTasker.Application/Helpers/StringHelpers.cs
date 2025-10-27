@@ -8,7 +8,7 @@ namespace ProTasker.Application.Helpers
 {
     public static class StringHelpers
     {
-        // Metnin sadece ilk harfini büyük yapar.
+        // It capitalizes only the first letter of the text.
         public static string Capitalize(string? text)
         {
             if (string.IsNullOrWhiteSpace(text))
@@ -17,7 +17,7 @@ namespace ProTasker.Application.Helpers
             return char.ToUpper(text[0]) + text.Substring(1);
         }
 
-        // Metindeki her kelimenin ilk harfini büyük yapar.
+        //It capitalizes the first letter of each word in the text.
         public static string CapitalizeWords(string? input)
         {
             if (string.IsNullOrWhiteSpace(input))

@@ -4,15 +4,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ProTasker.Application.DTOs;
+using AutoMapper;
 
-namespace ProTasker.Application.Interfaces
+namespace ProTasker.Application.Interfaces.Services
 {
-    public interface ITaskHistoryRepository
+    public interface ITaskHistoryService
     {
-        Task<List<TaskHistory>> GetAllAsync();
+        Task<IEnumerable<TaskHistory>> GetAllAsync();
         Task<TaskHistory?> GetByIdAsync(Guid id);
         Task AddAsync(TaskHistory history);
         Task UpdateAsync(TaskHistory history);
-        Task DeleteAsync(Guid id);
+        Task<bool> DeleteAsync(Guid id);
     }
 }

@@ -1,8 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ProTasker.Application.Interfaces;
 using ProTasker.Domain.Entities;
 using ProTasker.Infrastructure.Data;
-using ProTasker.Infrastructure.Interfaces;
+using ProTasker.Application.Interfaces.Repositories;
 using ProTasker.Infrastructure.Repositories;
 using System;
 using System.Collections.Generic;
@@ -15,51 +14,25 @@ using ProTasker.Domain.Enums;
 
 namespace ProTasker.Infrastructure.Repositories
 {
-    public class TeamRepository : ITeamRepository
+    public class TeamRepository : Repository<Team>, ITeamRepository
     {
-        private readonly AppDbContext _context;
+        public TeamRepository(AppDbContext context) : base(context) { }
 
-        public TeamRepository(AppDbContext context)
+        public override async Task<IEnumerable<Team>> GetAllAsync()
         {
-            _context = context;
-        }
-
-        public async Task<List<Team>> GetAllAsync()
-        {
-            return await _context.Teams
+            return await _dbSet
                 .Include(t => t.Members)
                 .Include(t => t.Tasks)
                 .ToListAsync();
         }
 
-        public async Task<Team?> GetByIdAsync(Guid id)=>await _context.Teams
-            .Include(t => t.Members)
-            .Include(t => t.Tasks)
-            .FirstOrDefaultAsync(t => t.Id == id);
-
-
-
-
-        public async Task AddAsync(Team team)
+        public override async Task<Team?> GetByIdAsync(Guid id)
         {
-            _context.Teams.Add(team);
-            await _context.SaveChangesAsync();
+            return await _dbSet
+                .Include(t => t.Members)
+                .Include(t => t.Tasks)
+                .FirstOrDefaultAsync(t => t.Id == id);
         }
 
-        public async Task UpdateAsync(Team team)
-        {
-            _context.Teams.Update(team);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task DeleteAsync(Guid id)
-        {
-            var team = await _context.Teams.FindAsync(id);
-            if (team != null)
-            {
-                _context.Teams.Remove(team);
-                await _context.SaveChangesAsync();
-            }
-        }
     }
 }

@@ -1,11 +1,12 @@
 using Microsoft.EntityFrameworkCore;
-using ProTasker.Application.Interfaces;
 using ProTasker.Application.Services;
 using ProTasker.Infrastructure.Data;
 using ProTasker.Infrastructure.Interfaces;
 using ProTasker.Infrastructure.Repositories;
 using AutoMapper;
 using ProTasker.Application.Mapping;
+using ProTasker.Application.Interfaces.Repositories;
+using ProTasker.Application.Interfaces.Services;
 
 
 

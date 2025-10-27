@@ -2,11 +2,11 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProTasker.Application.DTOs;
-using ProTasker.Application.Interfaces;
 using ProTasker.Application.Services;
 using ProTasker.Domain.Entities;
 using System.Threading.Tasks;
 using ProTasker.Application.Helpers;
+using ProTasker.Application.Interfaces.Services;
 
 namespace ProTasker.Api.Controllers
 {
@@ -24,56 +24,66 @@ namespace ProTasker.Api.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll()
         {
-            var users = await _service.GetAllUsersAsync();
-            var userDto = _mapper.Map<List<UserDTO>>(users);
+            var users = await _service.GetAllAsync();
+            var userDto = _mapper.Map<IEnumerable<UserDTO>>(users);
             return Ok(userDto);
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(Guid id)
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
-            var user = await _service.GetUserByIdAsync(id);
-            if (user == null) return NotFound();
+            var user = await _service.GetByIdAsync(id);
+            if (user == null) return NotFound(new { Message = "The user with the provided Id could not be found." });
             var userDto = _mapper.Map<UserDTO>(user);
             return Ok(userDto);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(UserDTO userDto)
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [Consumes("application/json")]
+        public async Task<IActionResult> Create([FromBody] UserDTO userDto)
         {
-            //-----------mapping profile'a alındı---------------
-            //userDto.UserName = StringHelpers.CapitalizeWords(userDto.UserName);
-            //userDto.TeamName = StringHelpers.CapitalizeWords(userDto.TeamName);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-            var user = _mapper.Map<User>(userDto);   // DTO -> Entity
-            await _service.AddUserAsync(user);       // Entity repository’ye gidiyor
-            var createdUserDto = _mapper.Map<UserDTO>(user); // Entity -> DTO
+            var user = _mapper.Map<User>(userDto);
+            await _service.AddAsync(user);
+            var createdUserDto = _mapper.Map<UserDTO>(user);
             return CreatedAtAction(nameof(GetById), new { id = createdUserDto.Id }, createdUserDto);
         }
 
+
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, UserDTO userDto)
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [Consumes("application/json")]
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UserDTO userDto)
         {
-            var user = await _service.GetUserByIdAsync(id);
-            if (user == null) return NotFound();
-            user.Id = id; // Id'yi koruyoruz
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-            //userDto.UserName = StringHelpers.CapitalizeWords(userDto.UserName);
-            //userDto.TeamName = StringHelpers.CapitalizeWords(userDto.TeamName);
+            var user = await _service.GetByIdAsync(id);
+            if (user == null) return NotFound(new { Message = "The user with the provided Id could not be found." });
 
-            _mapper.Map(userDto, user); //// sadece var olan entity üzerine map et
-            await _service.UpdateUserAsync(user);
+            user.Id = id; // Ensure we preserve the ID  
+            _mapper.Map(userDto, user);
+            await _service.UpdateAsync(user);
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(Guid id)
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
-            var user = await _service.GetUserByIdAsync(id);
-            if (user == null) return NotFound();
-            await _service.DeleteUserAsync(id);
+            var deleted = await _service.DeleteAsync(id);
+            if (!deleted)
+                return NotFound(new { Message = $"User with Id {id} could not be deleted because it does not exist." });
             return NoContent();
         }
     }

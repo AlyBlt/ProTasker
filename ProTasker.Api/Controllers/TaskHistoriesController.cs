@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProTasker.Application.DTOs;
 using ProTasker.Application.Helpers;
-using ProTasker.Application.Interfaces;
+using ProTasker.Application.Interfaces.Services;
 using ProTasker.Domain.Entities;
 using System.Threading.Tasks;
 
@@ -23,63 +23,70 @@ namespace ProTasker.Api.Controllers
 
         //GET: api/TaskHistories
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll()
         {
-            var histories = await _service.GetAllHistoriesAsync();
-            var historyDtos = _mapper.Map<IEnumerable<TaskHistoryDTO>>(histories); // Entity -> DTO dönüşümü
+            var histories = await _service.GetAllAsync(); 
+            var historyDtos = _mapper.Map<IEnumerable<TaskHistoryDTO>>(histories); // Entity -> DTO
             return Ok(historyDtos);
         }
 
         //GET: api/TaskHistories/{id}
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(Guid id)
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetById([FromRoute] Guid id)
         {
-            var history = await _service.GetHistoryByIdAsync(id);
-            if (history == null) return NotFound();
+            var history = await _service.GetByIdAsync(id); 
+            if (history == null) return NotFound(new { Message = "The task history with the provided Id could not be found." });
             var historyDto = _mapper.Map<TaskHistoryDTO>(history);
             return Ok(historyDto);
         }
 
         //POST: api/TaskHistories
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [Consumes("application/json")]
         public async Task<IActionResult> Create([FromBody] TaskHistoryDTO historyDto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            //-----------mapping profile'a alındı---------------
-            //historyDto.PerformedByUserName = StringHelpers.CapitalizeWords(historyDto.PerformedByUserName);
-         
-            var history = _mapper.Map<TaskHistory>(historyDto); // DTO -> Entity dönüşümü
-            await _service.AddHistoryAsync(history);
-            var createdHistoryDto = _mapper.Map<TaskHistoryDTO>(history); // Entity -> DTO dönüşümü
+            var history = _mapper.Map<TaskHistory>(historyDto); // DTO -> Entity
+            await _service.AddAsync(history); 
+            var createdHistoryDto = _mapper.Map<TaskHistoryDTO>(history); // Entity -> DTO
             return CreatedAtAction(nameof(GetById), new { id = createdHistoryDto.Id }, createdHistoryDto);
-
         }
+
 
         //PUT: api/TaskHistories/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] TaskHistoryDTO historyDto)
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [Consumes("application/json")]
+        public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] TaskHistoryDTO historyDto)
         {
-            var history = await _service.GetHistoryByIdAsync(id);
-            if (history == null) return NotFound();
-            history.Id = id;
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-           //historyDto.PerformedByUserName = StringHelpers.CapitalizeWords(historyDto.PerformedByUserName);
+            var history = await _service.GetByIdAsync(id); 
+            if (history == null) return NotFound(new { Message = "The task history with the provided Id could not be found." });
 
-            _mapper.Map(historyDto, history); // DTO -> Entity dönüşümü
-            await _service.UpdateHistoryAsync(history);
+            history.Id = id; // Preserve the existing Id
+            _mapper.Map(historyDto, history); // DTO -> Entity
+            await _service.UpdateAsync(history); 
             return NoContent();
-
         }
 
         //DELETE: api/TaskHistories/{id}
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(Guid id)
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
-            var history = await _service.GetHistoryByIdAsync(id);
-            if (history == null) return NotFound();
-            await _service.DeleteHistoryAsync(id);
+            var deleted = await _service.DeleteAsync(id); 
+            if (!deleted)
+                return NotFound(new { Message = $"Task history with Id {id} could not be deleted because it does not exist." });
             return NoContent();
         }
     }

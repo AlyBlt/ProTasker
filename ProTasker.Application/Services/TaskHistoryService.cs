@@ -1,5 +1,4 @@
-﻿using ProTasker.Application.Interfaces;
-using ProTasker.Domain.Entities;
+﻿using ProTasker.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using ProTasker.Application.DTOs;
 using AutoMapper;
+using ProTasker.Application.Interfaces.Repositories;
+using ProTasker.Application.Interfaces.Services;
 
 namespace ProTasker.Application.Services
 {
@@ -19,10 +20,14 @@ namespace ProTasker.Application.Services
             _repository = repository;
         }
 
-        public Task<List<TaskHistory>> GetAllHistoriesAsync() => _repository.GetAllAsync();
-        public Task<TaskHistory?> GetHistoryByIdAsync(Guid id) => _repository.GetByIdAsync(id);
-        public Task AddHistoryAsync(TaskHistory history) => _repository.AddAsync(history);
-        public Task UpdateHistoryAsync(TaskHistory history) => _repository.UpdateAsync(history);
-        public Task DeleteHistoryAsync(Guid id) => _repository.DeleteAsync(id);
+        public Task<IEnumerable<TaskHistory>> GetAllAsync() => _repository.GetAllAsync();
+
+        public Task<TaskHistory?> GetByIdAsync(Guid id) => _repository.GetByIdAsync(id);
+
+        public Task AddAsync(TaskHistory history) => _repository.AddAsync(history);
+
+        public Task UpdateAsync(TaskHistory history) => _repository.UpdateAsync(history);
+
+        public Task<bool> DeleteAsync(Guid id) => _repository.DeleteAsync(id);
     }
 }

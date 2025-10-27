@@ -1,19 +1,19 @@
-﻿using ProTasker.Domain.Entities;
+﻿using ProTasker.Application.DTOs;
+using ProTasker.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-
-namespace ProTasker.Infrastructure.Interfaces
+namespace ProTasker.Application.Interfaces.Services
 {
-    public interface ITeamRepository
+    public interface ITeamService
     {
-        Task<List<Team>> GetAllAsync();
+        Task<IEnumerable<Team>> GetAllAsync();
         Task<Team?> GetByIdAsync(Guid id);
         Task AddAsync(Team team);
         Task UpdateAsync(Team team);
-        Task DeleteAsync(Guid id);
+        Task<bool> DeleteAsync(Guid id);
     }
 }

@@ -1,5 +1,4 @@
-﻿using ProTasker.Application.Interfaces;
-using ProTasker.Domain.Entities;
+﻿using ProTasker.Domain.Entities;
 using ProTasker.Infrastructure.Data;
 using System;
 using System.Collections.Generic;
@@ -8,56 +7,30 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProTasker.Domain.Enums;
+using ProTasker.Application.Interfaces.Repositories;
 
 
 
 namespace ProTasker.Infrastructure.Repositories
 {
-    public class TaskHistoryRepository : ITaskHistoryRepository
+    public class TaskHistoryRepository : Repository<TaskHistory>, ITaskHistoryRepository
     {
-        private readonly AppDbContext _context;
+        public TaskHistoryRepository(AppDbContext context) : base(context) { }
 
-        public TaskHistoryRepository(AppDbContext context)
+        public override async Task<IEnumerable<TaskHistory>> GetAllAsync()
         {
-            _context = context;
-        }
-
-        public async Task<List<TaskHistory>> GetAllAsync()
-        {
-            return await _context.TaskHistories
+            return await _dbSet
                 .Include(h => h.Task)
                 .Include(h => h.PerformedByUser)
                 .ToListAsync();
         }
 
-        public async Task<TaskHistory?> GetByIdAsync(Guid id)
+        public override async Task<TaskHistory?> GetByIdAsync(Guid id)
         {
-            return await _context.TaskHistories
+            return await _dbSet
                 .Include(h => h.Task)
                 .Include(h => h.PerformedByUser)
                 .FirstOrDefaultAsync(h => h.Id == id);
-        }
-
-        public async Task AddAsync(TaskHistory history)
-        {
-            _context.TaskHistories.Add(history);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task UpdateAsync(TaskHistory history)
-        {
-            _context.TaskHistories.Update(history);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task DeleteAsync(Guid id)
-        {
-            var history = await _context.TaskHistories.FindAsync(id);
-            if (history != null)
-            {
-                _context.TaskHistories.Remove(history);
-                await _context.SaveChangesAsync();
-            }
         }
     }
 }

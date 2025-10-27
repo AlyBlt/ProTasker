@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ProTasker.Application.Interfaces;
 using ProTasker.Domain.Entities;
 using AutoMapper;
 using ProTasker.Application.DTOs;
+using ProTasker.Application.Interfaces.Repositories;
+using ProTasker.Application.Interfaces.Services;
 
 namespace ProTasker.Application.Services
 {
@@ -19,10 +20,14 @@ namespace ProTasker.Application.Services
             _repository = repository;
         }
 
-        public Task<List<User>> GetAllUsersAsync() => _repository.GetAllAsync();
-        public Task<User?> GetUserByIdAsync(Guid id) => _repository.GetByIdAsync(id);
-        public Task AddUserAsync(User user) => _repository.AddAsync(user);
-        public Task UpdateUserAsync(User user) => _repository.UpdateAsync(user);
-        public Task DeleteUserAsync(Guid id) => _repository.DeleteAsync(id);
+        public Task<IEnumerable<User>> GetAllAsync() => _repository.GetAllAsync();
+
+        public Task<User?> GetByIdAsync(Guid id) => _repository.GetByIdAsync(id);
+
+        public Task AddAsync(User user) => _repository.AddAsync(user);
+
+        public Task UpdateAsync(User user) => _repository.UpdateAsync(user);
+
+        public Task<bool> DeleteAsync(Guid id) => _repository.DeleteAsync(id);
     }
 }

@@ -7,7 +7,7 @@ namespace ProTasker.Infrastructure.Data
 {
     public static class SeedData
     {
-        //Şimdilik Migration (HasData) ile yapıldı ama ilerde runtime (Program.cs + extension) denenebilir.
+        //it’s done using Migration (HasData), but in the future, the runtime approach (Program.cs + extension) can be tried.
         public static void Seed(ModelBuilder modelBuilder)
         {
             // ---------------- USERS ----------------
