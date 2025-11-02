@@ -13,7 +13,7 @@ namespace ProTasker.Domain.Entities
         public string Description { get; set; }= string.Empty;
 
         // Team Leader (A user)
-        public Guid LeaderId { get; set; }
+        public Guid? LeaderId { get; set; }
         public User? Leader { get; set; }
 
         // Navigational properties

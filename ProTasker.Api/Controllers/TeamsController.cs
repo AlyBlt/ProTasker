@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProTasker.Application.DTOs;
@@ -22,7 +23,7 @@ namespace ProTasker.Api.Controllers
             _service = service;
             _mapper = mapper;
         }
-
+        [Authorize(Policy = "AdminOnly")]
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll()
@@ -32,6 +33,7 @@ namespace ProTasker.Api.Controllers
             return Ok(teamDtos);
         }
 
+        [Authorize]
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -43,6 +45,7 @@ namespace ProTasker.Api.Controllers
             return Ok(teamDto);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [Consumes("application/json")]
@@ -57,7 +60,7 @@ namespace ProTasker.Api.Controllers
             return CreatedAtAction(nameof(GetById), new { id = createdTeamDto.Id }, createdTeamDto);
         }
 
-
+        [Authorize(Policy = "TeamLeaderOnly")]
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -76,6 +79,7 @@ namespace ProTasker.Api.Controllers
             return NoContent();
         }
 
+        [Authorize(Policy = "AdminOnly")]
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

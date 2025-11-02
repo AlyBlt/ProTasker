@@ -1,20 +1,17 @@
-﻿using System;
+﻿using ProTasker.Application.Models;  // ApplicationUser'ı burada alıyoruz
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ProTasker.Domain.Entities;
-
 
 namespace ProTasker.Application.Interfaces.Repositories
 {
-    public interface IUserRepository: IRepository<User>
+    public interface IUserRepository : IRepository<ApplicationUser>  // ApplicationUser'ı kullanıyoruz
     {
-        //If you wanna write some user speical methods
-        //Add here-->> for example: Task<IEnumerable<User>> GetUsersByTeamAsync(Guid teamId);
-        //or for example: Task<IEnumerable<User>> GetUsersByRoleAsync(string role);
-        //or maybe: Task<IEnumerable<User>> GetUsersOrderedByTaskCountAsync();
+        // Kullanıcıya özel metotlar burada tanımlanabilir
+        // Örneğin: Task<IEnumerable<ApplicationUser>> GetUsersByTeamAsync(Guid teamId);
+        // ya da: Task<IEnumerable<ApplicationUser>> GetUsersByRoleAsync(string role);
+        // veya: Task<IEnumerable<ApplicationUser>> GetUsersOrderedByTaskCountAsync();
     }
 }
-
-

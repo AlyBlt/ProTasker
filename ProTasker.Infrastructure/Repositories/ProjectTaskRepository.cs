@@ -18,21 +18,64 @@ namespace ProTasker.Infrastructure.Repositories
         public override async Task<IEnumerable<ProjectTask>> GetAllAsync()
         {
             return await _dbSet
-                .Include(t => t.AssignedUser)
-                .Include(t => t.Team)
-                .Include(t => t.Histories)
-                .ThenInclude(h => h.PerformedByUser)
+                .Select(t => new ProjectTask
+                {
+                    Id = t.Id,
+                    Title = t.Title,
+                    Description = t.Description,
+                    Status = t.Status,
+                    AssignedUserId = t.AssignedUserId,
+                    AssignedUser = t.AssignedUser,   // navigation
+                    TeamId = t.TeamId,
+                    Team = t.Team,                   // navigation
+                    Histories = t.Histories
+                        .Select(h => new TaskHistory
+                        {
+                            Id = h.Id,
+                            TaskId = h.TaskId,
+                            Task = h.Task,
+                            PerformedByUserId = h.PerformedByUserId,
+                            PerformedByUser = h.PerformedByUser,
+                            Action = h.Action,
+                            OldValue = h.OldValue,
+                            NewValue = h.NewValue,
+                            CreatedAt = h.CreatedAt
+                        }).ToList()
+                })
+                .AsSplitQuery()
                 .ToListAsync();
         }
 
         public override async Task<ProjectTask?> GetByIdAsync(Guid id)
         {
             return await _dbSet
-                .Include(t => t.AssignedUser)
-                .Include(t => t.Team)
-                .Include(t => t.Histories)
-                .ThenInclude(h => h.PerformedByUser)
-                .FirstOrDefaultAsync(t => t.Id == id);
+                .Where(t => t.Id == id)
+                .Select(t => new ProjectTask
+                {
+                    Id = t.Id,
+                    Title = t.Title,
+                    Description = t.Description,
+                    Status = t.Status,
+                    AssignedUserId = t.AssignedUserId,
+                    AssignedUser = t.AssignedUser,   // navigation
+                    TeamId = t.TeamId,
+                    Team = t.Team,                   // navigation
+                    Histories = t.Histories
+                        .Select(h => new TaskHistory
+                        {
+                            Id = h.Id,
+                            TaskId = h.TaskId,
+                            Task = h.Task,
+                            PerformedByUserId = h.PerformedByUserId,
+                            PerformedByUser = h.PerformedByUser,
+                            Action = h.Action,
+                            OldValue = h.OldValue,
+                            NewValue = h.NewValue,
+                            CreatedAt = h.CreatedAt
+                        }).ToList()
+                })
+                .AsSplitQuery()
+                .FirstOrDefaultAsync();
         }
     }
 }

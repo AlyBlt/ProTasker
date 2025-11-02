@@ -1,12 +1,11 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProTasker.Application.DTOs;
-using ProTasker.Application.Services;
-using ProTasker.Domain.Entities;
-using System.Threading.Tasks;
-using ProTasker.Application.Helpers;
 using ProTasker.Application.Interfaces.Services;
+using ProTasker.Application.Models;  // ApplicationUser'ı buradan alıyoruz
+using System.Threading.Tasks;
 
 namespace ProTasker.Api.Controllers
 {
@@ -23,6 +22,8 @@ namespace ProTasker.Api.Controllers
             _mapper = mapper;
         }
 
+        //Sadece Admin ve TeamLeader kullanıcıları tüm kullanıcıları listeleyebilsin
+        [Authorize(Policy = "AdminOnly")]
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll()
@@ -32,6 +33,8 @@ namespace ProTasker.Api.Controllers
             return Ok(userDto);
         }
 
+        //Herhangi bir giriş yapmış kullanıcı kendi profilini görüntüleyebilsin
+        [Authorize]
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -43,6 +46,8 @@ namespace ProTasker.Api.Controllers
             return Ok(userDto);
         }
 
+        //Sadece Admin kullanıcılar yeni kullanıcı oluşturabilsin
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [Consumes("application/json")]
@@ -51,13 +56,14 @@ namespace ProTasker.Api.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var user = _mapper.Map<User>(userDto);
+            var user = _mapper.Map<ApplicationUser>(userDto);
             await _service.AddAsync(user);
             var createdUserDto = _mapper.Map<UserDTO>(user);
             return CreatedAtAction(nameof(GetById), new { id = createdUserDto.Id }, createdUserDto);
         }
 
-
+        //Admin veya TeamLeader kullanıcıları güncelleme yapabilsin
+        [Authorize(Policy = "TeamLeaderOnly")]
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -76,6 +82,8 @@ namespace ProTasker.Api.Controllers
             return NoContent();
         }
 
+        //Yalnızca Admin kullanıcılar silebilsin
+        [Authorize(Policy = "AdminOnly")]
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

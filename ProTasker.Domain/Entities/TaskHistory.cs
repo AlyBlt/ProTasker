@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ProTasker.Domain.Enums;
 
+
 namespace ProTasker.Domain.Entities
 {
     public class TaskHistory

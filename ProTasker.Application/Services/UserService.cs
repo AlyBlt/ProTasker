@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ProTasker.Domain.Entities;
-using AutoMapper;
-using ProTasker.Application.DTOs;
-using ProTasker.Application.Interfaces.Repositories;
+﻿using ProTasker.Application.Interfaces.Repositories;
 using ProTasker.Application.Interfaces.Services;
+using ProTasker.Application.Models;  // ApplicationUser'ı burada alıyoruz
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ProTasker.Application.Services
 {
@@ -20,13 +15,13 @@ namespace ProTasker.Application.Services
             _repository = repository;
         }
 
-        public Task<IEnumerable<User>> GetAllAsync() => _repository.GetAllAsync();
+        public Task<IEnumerable<ApplicationUser>> GetAllAsync() => _repository.GetAllAsync();
 
-        public Task<User?> GetByIdAsync(Guid id) => _repository.GetByIdAsync(id);
+        public Task<ApplicationUser?> GetByIdAsync(Guid id) => _repository.GetByIdAsync(id);
 
-        public Task AddAsync(User user) => _repository.AddAsync(user);
+        public Task AddAsync(ApplicationUser user) => _repository.AddAsync(user);
 
-        public Task UpdateAsync(User user) => _repository.UpdateAsync(user);
+        public Task UpdateAsync(ApplicationUser user) => _repository.UpdateAsync(user);
 
         public Task<bool> DeleteAsync(Guid id) => _repository.DeleteAsync(id);
     }

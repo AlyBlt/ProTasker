@@ -20,17 +20,40 @@ namespace ProTasker.Infrastructure.Repositories
         public override async Task<IEnumerable<TaskHistory>> GetAllAsync()
         {
             return await _dbSet
-                .Include(h => h.Task)
-                .Include(h => h.PerformedByUser)
+                .Select(h => new TaskHistory
+                {
+                    Id = h.Id,
+                    TaskId = h.TaskId,
+                    Task = h.Task, // navigation
+                    PerformedByUserId = h.PerformedByUserId,
+                    PerformedByUser = h.PerformedByUser, 
+                    Action = h.Action,
+                    OldValue = h.OldValue,
+                    NewValue = h.NewValue,
+                    CreatedAt = h.CreatedAt
+                })
+                .AsSplitQuery()
                 .ToListAsync();
         }
 
         public override async Task<TaskHistory?> GetByIdAsync(Guid id)
         {
             return await _dbSet
-                .Include(h => h.Task)
-                .Include(h => h.PerformedByUser)
-                .FirstOrDefaultAsync(h => h.Id == id);
+                .Where(h => h.Id == id)
+                .Select(h => new TaskHistory
+                {
+                    Id = h.Id,
+                    TaskId = h.TaskId,
+                    Task = h.Task,
+                    PerformedByUserId = h.PerformedByUserId,
+                    PerformedByUser = h.PerformedByUser,
+                    Action = h.Action,
+                    OldValue = h.OldValue,
+                    NewValue = h.NewValue,
+                    CreatedAt = h.CreatedAt
+                })
+                .AsSplitQuery()
+                .FirstOrDefaultAsync();
         }
     }
 }

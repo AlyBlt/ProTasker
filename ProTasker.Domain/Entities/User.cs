@@ -1,4 +1,6 @@
 ﻿using ProTasker.Domain.Enums;
+using System;
+using System.Collections.Generic;
 
 namespace ProTasker.Domain.Entities
 {

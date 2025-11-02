@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using ProTasker.Application.Models;
 using ProTasker.Domain.Entities;
 using ProTasker.Domain.Enums;
 using System;
@@ -7,73 +9,97 @@ namespace ProTasker.Infrastructure.Data
 {
     public static class SeedData
     {
-        //it’s done using Migration (HasData), but in the future, the runtime approach (Program.cs + extension) can be tried.
         public static void Seed(ModelBuilder modelBuilder)
         {
+            var hasher = new PasswordHasher<ApplicationUser>();
+
             // ---------------- USERS ----------------
-            modelBuilder.Entity<User>().HasData(
-                new User
-                {
-                    Id = Guid.Parse("11111111-1111-1111-1111-111111111111"),
-                    UserName = "Admin",
-                    Email = "admin@protasker.com",
-                    PasswordHash = "hashedpassword",
-                    Role = UserRole.Admin
-                },
-                new User
-                {
-                    Id = Guid.Parse("22222222-2222-2222-2222-222222222222"),
-                    UserName = "TeamLeader",
-                    Email = "teamleader@protasker.com",
-                    PasswordHash = "hashedpassword",
-                    Role = UserRole.TeamLeader
-                },
-                new User
-                {
-                    Id = Guid.Parse("33333333-3333-3333-3333-333333333333"),
-                    UserName = "Member",
-                    Email = "member@protasker.com",
-                    PasswordHash = "hashedpassword",
-                    Role = UserRole.Member
-                },
-                new User
-                {
-                    Id = Guid.Parse("44444444-4444-4444-4444-444444444444"),
-                    UserName = "Alice",
-                    Email = "alice@protasker.com",
-                    PasswordHash = "hashedpassword",
-                    Role = UserRole.Member
-                },
-                new User
-                {
-                    Id = Guid.Parse("55555555-5555-5555-5555-555555555555"),
-                    UserName = "Bob",
-                    Email = "bob@protasker.com",
-                    PasswordHash = "hashedpassword",
-                    Role = UserRole.TeamLeader
-                }
-            );
+            var adminUser = new ApplicationUser
+            {
+                Id = Guid.Parse("11111111-1111-1111-1111-111111111111"),
+                UserName = "Admin",
+                NormalizedUserName = "ADMIN",
+                Email = "admin@protasker.com",
+                NormalizedEmail = "ADMIN@PROTASKER.COM",
+                Role = UserRole.Admin,
+                EmailConfirmed = true
+            };
+            adminUser.PasswordHash = hasher.HashPassword(adminUser, "Admin123!");
+
+            var teamLeader1 = new ApplicationUser
+            {
+                Id = Guid.Parse("22222222-2222-2222-2222-222222222222"),
+                UserName = "TeamLeader1",
+                NormalizedUserName = "TEAMLEADER1",
+                Email = "teamleader1@protasker.com",
+                NormalizedEmail = "TEAMLEADER1@PROTASKER.COM",
+                Role = UserRole.TeamLeader,
+                EmailConfirmed = true
+            };
+            teamLeader1.PasswordHash = hasher.HashPassword(teamLeader1, "Leader123!");
+
+            var teamLeader2 = new ApplicationUser
+            {
+                Id = Guid.Parse("55555555-5555-5555-5555-555555555555"),
+                UserName = "TeamLeader2",
+                NormalizedUserName = "TEAMLEADER2",
+                Email = "teamleader2@protasker.com",
+                NormalizedEmail = "TEAMLEADER2@PROTASKER.COM",
+                Role = UserRole.TeamLeader,
+                EmailConfirmed = true
+            };
+            teamLeader2.PasswordHash = hasher.HashPassword(teamLeader2, "Leader234!");
+
+            var member1 = new ApplicationUser
+            {
+                Id = Guid.Parse("33333333-3333-3333-3333-333333333333"),
+                UserName = "Member1",
+                NormalizedUserName = "MEMBER1",
+                Email = "member1@protasker.com",
+                NormalizedEmail = "MEMBER1@PROTASKER.COM",
+                Role = UserRole.Member,
+                EmailConfirmed = true
+            };
+            member1.PasswordHash = hasher.HashPassword(member1, "Member123!");
+
+            var member2 = new ApplicationUser
+            {
+                Id = Guid.Parse("44444444-4444-4444-4444-444444444444"),
+                UserName = "Member2",
+                NormalizedUserName = "MEMBER2",
+                Email = "member2@protasker.com",
+                NormalizedEmail = "MEMBER2@PROTASKER.COM",
+                Role = UserRole.Member,
+                EmailConfirmed = true
+            };
+            member2.PasswordHash = hasher.HashPassword(member2, "Member234!");
+
+            var users = new[] { adminUser, teamLeader1, teamLeader2, member1, member2 };
+            modelBuilder.Entity<ApplicationUser>().HasData(users);
 
             // ---------------- TEAMS ----------------
-            modelBuilder.Entity<Team>().HasData(
+            var teams = new[]
+            {
                 new Team
                 {
                     Id = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
                     Name = "Alpha Team",
                     Description = "First Team",
-                    LeaderId = Guid.Parse("22222222-2222-2222-2222-222222222222")
+                    LeaderId = teamLeader1.Id
                 },
                 new Team
                 {
                     Id = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
                     Name = "Beta Team",
                     Description = "Second Team",
-                    LeaderId = Guid.Parse("55555555-5555-5555-5555-555555555555")
+                    LeaderId = teamLeader2.Id
                 }
-            );
+            };
+            modelBuilder.Entity<Team>().HasData(teams);
 
             // ---------------- TASKS ----------------
-            modelBuilder.Entity<ProjectTask>().HasData(
+            var tasks = new[]
+            {
                 new ProjectTask
                 {
                     Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccccc"),
@@ -81,8 +107,8 @@ namespace ProTasker.Infrastructure.Data
                     Description = "Initialize project repository and structure",
                     CreatedAt = new DateTime(2025, 10, 26, 12, 0, 0),
                     Status = ProjectTaskStatus.Todo,
-                    TeamId = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
-                    AssignedUserId = Guid.Parse("33333333-3333-3333-3333-333333333333")
+                    TeamId = teams[0].Id,
+                    AssignedUserId = member1.Id
                 },
                 new ProjectTask
                 {
@@ -91,8 +117,8 @@ namespace ProTasker.Infrastructure.Data
                     Description = "Create database schema and tables",
                     CreatedAt = new DateTime(2025, 10, 26, 12, 30, 0),
                     Status = ProjectTaskStatus.InProgress,
-                    TeamId = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
-                    AssignedUserId = Guid.Parse("44444444-4444-4444-4444-444444444444")
+                    TeamId = teams[0].Id,
+                    AssignedUserId = member2.Id
                 },
                 new ProjectTask
                 {
@@ -101,30 +127,33 @@ namespace ProTasker.Infrastructure.Data
                     Description = "Develop REST API endpoints",
                     CreatedAt = new DateTime(2025, 10, 26, 13, 0, 0),
                     Status = ProjectTaskStatus.Todo,
-                    TeamId = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
-                    AssignedUserId = Guid.Parse("55555555-5555-5555-5555-555555555555")
+                    TeamId = teams[1].Id,
+                    AssignedUserId = teamLeader2.Id
                 }
-            );
+            };
+            modelBuilder.Entity<ProjectTask>().HasData(tasks);
 
             // ---------------- TASK HISTORIES ----------------
-            modelBuilder.Entity<TaskHistory>().HasData(
+            var histories = new[]
+            {
                 new TaskHistory
                 {
                     Id = Guid.Parse("ffffffff-ffff-ffff-ffff-ffffffffffff"),
-                    TaskId = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccccc"),
-                    PerformedByUserId = Guid.Parse("33333333-3333-3333-3333-333333333333"),
+                    TaskId = tasks[0].Id,
+                    PerformedByUserId = null,
                     Action = TaskActionType.Created,
                     CreatedAt = new DateTime(2025, 10, 26, 12, 0, 0)
                 },
                 new TaskHistory
                 {
                     Id = Guid.Parse("aaaaaaaa-ffff-ffff-ffff-ffffffffffff"),
-                    TaskId = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddddd"),
-                    PerformedByUserId = Guid.Parse("44444444-4444-4444-4444-444444444444"),
+                    TaskId = tasks[1].Id,
+                    PerformedByUserId = member2.Id,
                     Action = TaskActionType.Updated,
                     CreatedAt = new DateTime(2025, 10, 26, 12, 45, 0)
                 }
-            );
+            };
+            modelBuilder.Entity<TaskHistory>().HasData(histories);
         }
     }
 }

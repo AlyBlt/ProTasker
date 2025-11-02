@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using ProTasker.Application.Helpers;
+using ProTasker.Application.Models;
 
 
 
@@ -19,13 +20,16 @@ namespace ProTasker.Application.Mapping
         public MappingProfile()
         {
             // User
-            CreateMap<User, UserDTO>()
+            CreateMap<ApplicationUser, UserDTO>()
                 .ForMember(dest => dest.TeamName,
-                    opt => opt.MapFrom(src =>
-                        src.Team != null ? StringHelpers.CapitalizeWords(src.Team.Name) : string.Empty))
+                    opt => opt.MapFrom(src => src.Team != null ? StringHelpers.CapitalizeWords(src.Team.Name) : string.Empty))
                 .ForMember(dest => dest.UserName,
                     opt => opt.MapFrom(src => StringHelpers.CapitalizeWords(src.UserName)))
-                .ReverseMap();
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                // Reverse map ederken hassas alanları dışla:
+                .ReverseMap()
+                .ForMember(dest => dest.PasswordHash, opt => opt.Ignore());
+    
 
             // Team
             CreateMap<Team, TeamDTO>()
