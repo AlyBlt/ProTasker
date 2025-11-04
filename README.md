@@ -7,40 +7,40 @@ It is designed for small-scale team collaboration, where each user belongs to a 
 
 ## Project Roadmap / Features
 
-1. **CRUD Operations** [Done] (Completed)  
+1. **CRUD Operations** - [x] (Completed)  
    Full Create, Read, Update, Delete functionality for all main entities.
 
-2. 4. **Layered Architecture** [Done] (Implemented)  
+2. **Layered Architecture** - [x] (Implemented)  
    Domain-Driven, multi-layer structure with clean separation between API, Application, Domain, and Infrastructure layers.
 
-3. **Identity + JWT Integration** [Done] (Completed)  
+3. **Identity + JWT Integration** - [x] (Completed)  
    Secure user authentication and JWT token generation.
 
-4. **Role-Based Authorization** [Done] (Completed)  
+4. **Role-Based Authorization** - [x] (Completed)  
    Role-based access for Admin, TeamLeader, and Member.
 
-5. **AutoMapper Integration**  [Done] (Completed)
+5. **AutoMapper Integration** - [x] (Completed)
    Simplifies entity-to-DTO mapping.
 
-6. **Entity Relationships & EF Configurations**  [Done] (Completed)
+6. **Entity Relationships & EF Configurations** - [x] (Completed)
    Well-structured one-to-many relationships with proper database configuration and seeding.
 
-7. **Validation (FluentValidation)**  
+7. **Validation (FluentValidation)** - [ ]  
    Ensures accurate and secure request data.
 
-8. **Exception Handling & Logging**  
+8. **Exception Handling & Logging** - [ ]  
    Centralized error handling and structured logging.
 
-9. **Unit Testing**  
+9. **Unit Testing** - [ ]  
    Service and controller test coverage.
 
-10. **Logging**   
+10. **Logging** - [ ]   
    Centralized structured logging setup.
 
-11. **GitHub & README**  
+11. **GitHub & README** - [ ]  
    Version control and documentation setup.
 
-12. **Full Documentation**  
+12. **Full Documentation** - [ ]  
    Endpoint references and usage guides.
 
 ---
@@ -67,25 +67,19 @@ This approach is optimized for small-scale collaboration platforms.
 
 ProTasker.Api
 |-- Controllers
-|   |-- AuthController.cs
-|   |-- UsersController.cs
-|   |-- TeamsController.cs
-|   |-- ProjectTasksController.cs
-|   `-- TaskHistoriesController.cs
-|-- Extensions
-`-- MiddleWares
+| |-- AuthController.cs
+| |-- UsersController.cs
+| |-- TeamsController.cs
+| |-- ProjectTasksController.cs
+| -- TaskHistoriesController.cs |-- Extensions -- MiddleWares
 
 ProTasker.Application
 |-- DTOs
 |-- Exceptions
 |-- Helpers
 |-- Interfaces
-|   |-- Repositories
-|   `-- Services
-|-- Mapping
-|-- Models
-|-- Services
-`-- Validators
+| |-- Repositories
+| -- Services |-- Mapping |-- Models |-- Services -- Validators
 
 ProTasker.Domain
 |-- Entities
@@ -152,14 +146,14 @@ To restore all dependencies and NuGet packages, run:
 ```bash
 dotnet restore
 ```
-## 3. Apply Migrations and Seed the Database
+### 3. Apply Migrations and Seed the Database
 
 Apply Entity Framework Core migrations to create and seed the database:
 
 ```bash
 dotnet ef database update
 ```
-## 4. Run the API
+### 4. Run the API
 
 Start the application:
 
