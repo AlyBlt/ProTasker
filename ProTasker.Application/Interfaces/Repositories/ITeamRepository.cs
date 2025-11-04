@@ -11,6 +11,5 @@ namespace ProTasker.Application.Interfaces.Repositories
 {
     public interface ITeamRepository : IRepository<Team>
     {
-      
     }
 }

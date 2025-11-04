@@ -30,7 +30,7 @@ namespace ProTasker.Application.Services
         }
 
         // Kullanıcı girişi ve JWT token üretme
-        public async Task<string?> LoginAsync(string email, string password)
+        public async Task<string> LoginAsync(string email, string password)
         {
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
@@ -46,7 +46,7 @@ namespace ProTasker.Application.Services
 
             // JWT token'ı oluştur
             var token = await GenerateJwtTokenAsync(user);
-            return token;
+            return token ?? ""; // null gelirse boş string dön
         }
 
         // Kullanıcı kaydı ve giriş

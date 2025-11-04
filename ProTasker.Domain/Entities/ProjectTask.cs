@@ -1,9 +1,12 @@
-﻿using System;
+﻿using ProTasker.Domain.Enums;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ProTasker.Domain.Enums;
+
+
 
 
 
@@ -19,12 +22,14 @@ namespace ProTasker.Domain.Entities
         public ProjectTaskStatus Status { get; set; }=ProjectTaskStatus.Todo;
 
         // Foreign keys
+        // N:1 — Görevin atandığı kullanıcı
         public Guid? AssignedUserId { get; set; }
-        public User? AssignedUser { get; set; }  //who is resposible for the job
-
+      
+        // N:1 — Görevin ait olduğu takım
         public Guid TeamId { get; set; } //can not be null
-        public Team Team { get; set; } = null!;
+        public virtual Team Team { get; set; } = null!;
 
+        // 1:N — Göreve ait geçmiş kayıtları
         public ICollection<TaskHistory> Histories { get; set; } = new List<TaskHistory>();
         
         

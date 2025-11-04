@@ -19,6 +19,7 @@ namespace ProTasker.Api.Controllers
 
         // Login endpoint
         [HttpPost("login")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             var token = await _authService.LoginAsync(model.Email, model.Password);
@@ -33,6 +34,8 @@ namespace ProTasker.Api.Controllers
         // Register endpoint
         [Authorize(Roles = "Admin")]
         [HttpPost("register")]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
             if (!ModelState.IsValid)

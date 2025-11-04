@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+
 
 namespace ProTasker.Domain.Entities
 {
@@ -14,10 +17,9 @@ namespace ProTasker.Domain.Entities
 
         // Team Leader (A user)
         public Guid? LeaderId { get; set; }
-        public User? Leader { get; set; }
-
+               
         // Navigational properties
-        public ICollection<User> Members { get; set; } = new List<User>(); //A team may include more members
+        
         public ICollection<ProjectTask> Tasks { get; set; } = new List<ProjectTask>(); //Tasks for team
     }
 }

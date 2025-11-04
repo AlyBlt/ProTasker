@@ -16,14 +16,15 @@ namespace ProTasker.Application.DTOs
         [Required]
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public DateTime CreatedAt { get; set; }
-        public DateTime? DueDate { get; set; }
+        
 
         [Required]
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public ProjectTaskStatus Status { get; set; } = ProjectTaskStatus.Todo;
 
-        public string? AssignedUserName { get; set; }
+        public Guid? AssignedUserId { get; set; }
         public string? TeamName { get; set; }
+
+        public Guid TeamId { get; set; }
     }
 }

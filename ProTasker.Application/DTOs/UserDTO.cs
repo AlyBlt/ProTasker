@@ -22,6 +22,6 @@ namespace ProTasker.Application.DTOs
         [Required]
         [EmailAddress(ErrorMessage = "Invalid email address")]
         public string Email { get; set; } = string.Empty;
-        public string TeamName { get; set; } = string.Empty; 
+        public Guid? TeamId { get; set; }
     }
 }

@@ -1,11 +1,12 @@
-﻿using System;
+﻿using AutoMapper;
+using ProTasker.Application.DTOs;
+using ProTasker.Application.Models;
+using ProTasker.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ProTasker.Domain.Entities;
-using ProTasker.Application.DTOs;
-using AutoMapper;
 
 namespace ProTasker.Application.Interfaces.Services
 {
@@ -16,5 +17,8 @@ namespace ProTasker.Application.Interfaces.Services
         Task AddAsync(ProjectTask task);
         Task UpdateAsync(ProjectTask task);
         Task<bool> DeleteAsync(Guid id);
+        Task<ApplicationUser?> GetUserByIdAsync(Guid userId);
+
+
     }
 }

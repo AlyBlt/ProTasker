@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
-using ProTasker.Domain.Entities;
-using ProTasker.Application.Models;
-using ProTasker.Domain.Enums;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using ProTasker.Application.Models;
+using ProTasker.Domain.Entities;
+using ProTasker.Domain.Enums;
+using ProTasker.Infrastructure.Configurations;
 
 namespace ProTasker.Infrastructure.Data
 {
@@ -16,7 +17,6 @@ namespace ProTasker.Infrastructure.Data
         }
 
         // DbSet tanımlamaları
-        //public DbSet<ApplicationUser> Users { get; set; } = null!;
         public DbSet<Team> Teams { get; set; } = null!;
         public DbSet<ProjectTask> Tasks { get; set; } = null!;
         public DbSet<TaskHistory> TaskHistories { get; set; } = null!;
@@ -25,61 +25,13 @@ namespace ProTasker.Infrastructure.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<TaskHistory>()
-                .Ignore(th => th.PerformedByUser); // Domain User’ı ignore et
+            // Domain.User'ı EF tabloya çevirmesin — çünkü ApplicationUser ile çalışıyoruz.
+            modelBuilder.Ignore<User>();
+            modelBuilder.ApplyConfiguration(new ProjectTaskConfiguration());
+            modelBuilder.ApplyConfiguration(new TeamConfiguration());
+            modelBuilder.ApplyConfiguration(new TaskHistoryConfiguration());
+            modelBuilder.ApplyConfiguration(new ApplicationUserConfiguration());
 
-            modelBuilder.Entity<TaskHistory>()
-                .Property<Guid?>("PerformedByUserId"); // Shadow property olarak GUID oluştur
-
-            modelBuilder.Entity<TaskHistory>()
-                .HasOne<ApplicationUser>()
-                .WithMany(u => u.TaskHistories)
-                .HasForeignKey("PerformedByUserId") // string ile shadow property
-                .OnDelete(DeleteBehavior.SetNull);
-
-            // ---------------- RELATIONS ----------------
-
-            // Team - Leader (ApplicationUser ile)
-            modelBuilder.Entity<Team>()
-                .HasOne<ApplicationUser>()  // sadece FK, navigation yok
-                .WithMany()
-                .HasForeignKey(t => t.LeaderId)
-                .OnDelete(DeleteBehavior.SetNull);
-
-            // Team → Members (ApplicationUser ile)
-            modelBuilder.Entity<Team>()
-                .HasMany(t => t.Members)
-                .WithOne(u => u.Team)
-                .HasForeignKey(u => u.TeamId)
-                .OnDelete(DeleteBehavior.SetNull);
-
-            // Team → ProjectTasks
-            modelBuilder.Entity<Team>()
-                .HasMany(t => t.Tasks)
-                .WithOne(pt => pt.Team)
-                .HasForeignKey(pt => pt.TeamId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            // ProjectTask → AssignedUser (ApplicationUser ile)
-            modelBuilder.Entity<ProjectTask>()
-                .HasOne<ApplicationUser>()  // navigation yok
-                .WithMany(u => u.Tasks)
-                .HasForeignKey(pt => pt.AssignedUserId)
-                .OnDelete(DeleteBehavior.SetNull);
-
-            // ProjectTask → TaskHistories
-            modelBuilder.Entity<ProjectTask>()
-                .HasMany(pt => pt.Histories)
-                .WithOne(th => th.Task)
-                .HasForeignKey(th => th.TaskId)
-                .OnDelete(DeleteBehavior.SetNull);
-
-            // TaskHistory → PerformedByUser (ApplicationUser ile)
-            modelBuilder.Entity<TaskHistory>()
-                .HasOne<ApplicationUser>()  // navigation yok
-                .WithMany(u => u.TaskHistories)
-                .HasForeignKey(th => th.PerformedByUserId)
-                .OnDelete(DeleteBehavior.SetNull);
 
             // ---------------- ENUM CONVERSIONS ----------------
             modelBuilder.Entity<ApplicationUser>()

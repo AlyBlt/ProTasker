@@ -15,6 +15,6 @@ namespace ProTasker.Application.DTOs
         [Required]
         public string Name { get; set; } = string.Empty;
         public string? Description { get; set; }
-        public string LeaderName { get; set; }= string.Empty;
+        public Guid? LeaderId { get; set; }
     }
 }

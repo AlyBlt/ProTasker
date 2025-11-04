@@ -30,6 +30,8 @@ namespace ProTasker.Infrastructure.Repositories
                 throw new ArgumentNullException(nameof(entity));
             await _dbSet.AddAsync(entity);
             await _context.SaveChangesAsync();
+            
+        
         }
 
         public virtual async Task UpdateAsync(T entity)

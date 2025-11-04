@@ -50,6 +50,7 @@ namespace ProTasker.Api.Controllers
         [Authorize(Roles = "Admin")]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Consumes("application/json")]
         public async Task<IActionResult> Create([FromBody] TaskHistoryDTO historyDto)
         {
@@ -68,6 +69,7 @@ namespace ProTasker.Api.Controllers
         [HttpPut("{id}")]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [Consumes("application/json")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] TaskHistoryDTO historyDto)
         {

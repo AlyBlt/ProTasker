@@ -10,7 +10,7 @@ namespace ProTasker.Infrastructure.Data
             var optionsBuilder = new DbContextOptionsBuilder<AppDbContext>();
 
             // TODO: Kendi connection string'ini buraya yaz
-            optionsBuilder.UseSqlServer("Server=.;Database=ProTaskerDb;Trusted_Connection=True;TrustServerCertificate=True;");
+            optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=ProTaskerDb;Trusted_Connection=True;");
 
             return new AppDbContext(optionsBuilder.Options);
         }

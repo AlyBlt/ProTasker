@@ -12,11 +12,12 @@ namespace ProTasker.Application.DTOs
     public class TaskHistoryDTO
     {
         public Guid Id { get; set; }
-        public Guid? TaskId { get; set; }
+        public Guid TaskId { get; set; }
 
         [Required]
         [JsonConverter(typeof(JsonStringEnumConverter))]
         public TaskActionType Action { get; set; } = TaskActionType.Created;
-        public string? PerformedByUserName { get; set; }
+        public Guid? PerformedByUserId { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

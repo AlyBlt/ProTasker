@@ -34,7 +34,8 @@ namespace ProTasker.Infrastructure.Data
                 Email = "teamleader1@protasker.com",
                 NormalizedEmail = "TEAMLEADER1@PROTASKER.COM",
                 Role = UserRole.TeamLeader,
-                EmailConfirmed = true
+                EmailConfirmed = true,
+                TeamId = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
             };
             teamLeader1.PasswordHash = hasher.HashPassword(teamLeader1, "Leader123!");
 
@@ -46,7 +47,8 @@ namespace ProTasker.Infrastructure.Data
                 Email = "teamleader2@protasker.com",
                 NormalizedEmail = "TEAMLEADER2@PROTASKER.COM",
                 Role = UserRole.TeamLeader,
-                EmailConfirmed = true
+                EmailConfirmed = true,
+                TeamId = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb")
             };
             teamLeader2.PasswordHash = hasher.HashPassword(teamLeader2, "Leader234!");
 
@@ -58,7 +60,8 @@ namespace ProTasker.Infrastructure.Data
                 Email = "member1@protasker.com",
                 NormalizedEmail = "MEMBER1@PROTASKER.COM",
                 Role = UserRole.Member,
-                EmailConfirmed = true
+                EmailConfirmed = true,
+                TeamId = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
             };
             member1.PasswordHash = hasher.HashPassword(member1, "Member123!");
 
@@ -70,26 +73,29 @@ namespace ProTasker.Infrastructure.Data
                 Email = "member2@protasker.com",
                 NormalizedEmail = "MEMBER2@PROTASKER.COM",
                 Role = UserRole.Member,
-                EmailConfirmed = true
+                EmailConfirmed = true,
+                TeamId = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa")
             };
             member2.PasswordHash = hasher.HashPassword(member2, "Member234!");
 
-            var users = new[] { adminUser, teamLeader1, teamLeader2, member1, member2 };
-            modelBuilder.Entity<ApplicationUser>().HasData(users);
+            modelBuilder.Entity<ApplicationUser>().HasData(adminUser, teamLeader1, teamLeader2, member1, member2);
 
             // ---------------- TEAMS ----------------
+            var alphaTeamId = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa");
+            var betaTeamId = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb");
+
             var teams = new[]
             {
                 new Team
                 {
-                    Id = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+                    Id = alphaTeamId,
                     Name = "Alpha Team",
                     Description = "First Team",
                     LeaderId = teamLeader1.Id
                 },
                 new Team
                 {
-                    Id = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
+                    Id = betaTeamId,
                     Name = "Beta Team",
                     Description = "Second Team",
                     LeaderId = teamLeader2.Id
@@ -107,7 +113,7 @@ namespace ProTasker.Infrastructure.Data
                     Description = "Initialize project repository and structure",
                     CreatedAt = new DateTime(2025, 10, 26, 12, 0, 0),
                     Status = ProjectTaskStatus.Todo,
-                    TeamId = teams[0].Id,
+                    TeamId = alphaTeamId,
                     AssignedUserId = member1.Id
                 },
                 new ProjectTask
@@ -117,7 +123,7 @@ namespace ProTasker.Infrastructure.Data
                     Description = "Create database schema and tables",
                     CreatedAt = new DateTime(2025, 10, 26, 12, 30, 0),
                     Status = ProjectTaskStatus.InProgress,
-                    TeamId = teams[0].Id,
+                    TeamId = alphaTeamId,
                     AssignedUserId = member2.Id
                 },
                 new ProjectTask
@@ -127,7 +133,7 @@ namespace ProTasker.Infrastructure.Data
                     Description = "Develop REST API endpoints",
                     CreatedAt = new DateTime(2025, 10, 26, 13, 0, 0),
                     Status = ProjectTaskStatus.Todo,
-                    TeamId = teams[1].Id,
+                    TeamId = betaTeamId,
                     AssignedUserId = teamLeader2.Id
                 }
             };
@@ -140,7 +146,7 @@ namespace ProTasker.Infrastructure.Data
                 {
                     Id = Guid.Parse("ffffffff-ffff-ffff-ffff-ffffffffffff"),
                     TaskId = tasks[0].Id,
-                    PerformedByUserId = null,
+                    PerformedByUserId = member1.Id,
                     Action = TaskActionType.Created,
                     CreatedAt = new DateTime(2025, 10, 26, 12, 0, 0)
                 },

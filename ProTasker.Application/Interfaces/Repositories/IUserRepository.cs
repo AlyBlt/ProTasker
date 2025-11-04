@@ -13,5 +13,6 @@ namespace ProTasker.Application.Interfaces.Repositories
         // Örneğin: Task<IEnumerable<ApplicationUser>> GetUsersByTeamAsync(Guid teamId);
         // ya da: Task<IEnumerable<ApplicationUser>> GetUsersByRoleAsync(string role);
         // veya: Task<IEnumerable<ApplicationUser>> GetUsersOrderedByTaskCountAsync();
+        Task<ApplicationUser?> GetByUserNameAsync(string username);
     }
 }

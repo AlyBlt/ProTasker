@@ -17,68 +17,24 @@ namespace ProTasker.Infrastructure.Repositories
         public override async Task<IEnumerable<ApplicationUser>> GetAllAsync()
         {
             return await _dbSet
-                .Select(u => new ApplicationUser
-                {
-                    Id = u.Id,
-                    UserName = u.UserName,
-                    Email = u.Email,
-                    Team = u.Team,
-                    Tasks = u.Tasks
-                        .Select(t => new ProjectTask
-                        {
-                            Id = t.Id,
-                            Title = t.Title,
-                            Status = t.Status,
-                            AssignedUserId = t.AssignedUserId
-                        }).ToList(),
-                    TaskHistories = u.TaskHistories
-                        .Select(h => new TaskHistory
-                        {
-                            Id = h.Id,
-                            TaskId = h.TaskId,
-                            PerformedByUserId = h.PerformedByUserId,
-                            Action = h.Action,
-                            OldValue = h.OldValue,
-                            NewValue = h.NewValue,
-                            CreatedAt = h.CreatedAt
-                        }).ToList()
-                })
-                .AsSplitQuery()
-                .ToListAsync();
+            .Include(u => u.Tasks)
+            .Include(u => u.TaskHistories)
+            .Include(u => u.Team)
+            .ToListAsync();
         }
 
         public override async Task<ApplicationUser?> GetByIdAsync(Guid id)
         {
             return await _dbSet
-                .Where(u => u.Id == id)
-                .Select(u => new ApplicationUser
-                {
-                    Id = u.Id,
-                    UserName = u.UserName,
-                    Email = u.Email,
-                    Team = u.Team,
-                    Tasks = u.Tasks
-                        .Select(t => new ProjectTask
-                        {
-                            Id = t.Id,
-                            Title = t.Title,
-                            Status = t.Status,
-                            AssignedUserId = t.AssignedUserId
-                        }).ToList(),
-                    TaskHistories = u.TaskHistories
-                        .Select(h => new TaskHistory
-                        {
-                            Id = h.Id,
-                            TaskId = h.TaskId,
-                            PerformedByUserId = h.PerformedByUserId,
-                            Action = h.Action,
-                            OldValue = h.OldValue,
-                            NewValue = h.NewValue,
-                            CreatedAt = h.CreatedAt
-                        }).ToList()
-                })
-                .AsSplitQuery()
-                .FirstOrDefaultAsync();
+            .Include(u => u.Tasks)
+            .Include(u => u.TaskHistories)
+            .Include(u => u.Team)
+            .FirstOrDefaultAsync(u => u.Id == id);
+        }
+
+        public async Task<ApplicationUser?> GetByUserNameAsync(string username)
+        {
+            return await _dbSet.FirstOrDefaultAsync(u => u.UserName.Equals(username, StringComparison.OrdinalIgnoreCase));
         }
     }
 }
