@@ -7,41 +7,47 @@ It is designed for small-scale team collaboration, where each user belongs to a 
 
 ## Project Roadmap / Features
 
-1. **CRUD Operations** - [x] (Completed)  
+1. **CRUD Operations**  
+   [x] (Completed)  
    Full Create, Read, Update, Delete functionality for all main entities.
 
-2. **Layered Architecture** - [x] (Implemented)  
+2. **Layered Architecture**  
+   [x] (Implemented)  
    Domain-Driven, multi-layer structure with clean separation between API, Application, Domain, and Infrastructure layers.
 
-3. **Identity + JWT Integration** - [x] (Completed)  
+3. **Identity + JWT Integration**  
+   [x] (Completed)  
    Secure user authentication and JWT token generation.
 
-4. **Role-Based Authorization** - [x] (Completed)  
+4. **Role-Based Authorization**  
+   [x] (Completed)  
    Role-based access for Admin, TeamLeader, and Member.
 
-5. **AutoMapper Integration** - [x] (Completed)
+5. **AutoMapper Integration**  
+   [x] (Completed)  
    Simplifies entity-to-DTO mapping.
 
-6. **Entity Relationships & EF Configurations** - [x] (Completed)
+6. **Entity Relationships & EF Configurations**  
+   [x] (Completed)  
    Well-structured one-to-many relationships with proper database configuration and seeding.
 
-7. **Validation (FluentValidation)** - [ ]  
+7. **Validation (FluentValidation)**  
    Ensures accurate and secure request data.
 
-8. **Exception Handling & Logging** - [ ]  
+8. **Exception Handling & Logging**  
    Centralized error handling and structured logging.
 
-9. **Unit Testing** - [ ]  
+9. **Unit Testing**  
    Service and controller test coverage.
 
-10. **Logging** - [ ]   
-   Centralized structured logging setup.
+10. **Logging**  
+    Centralized structured logging setup.
 
-11. **GitHub & README** - [ ]  
-   Version control and documentation setup.
+11. **GitHub & README**  
+    Version control and documentation setup.
 
-12. **Full Documentation** - [ ]  
-   Endpoint references and usage guides.
+12. **Full Documentation**  
+    Endpoint references and usage guides.
 
 ---
 
@@ -65,21 +71,28 @@ This approach is optimized for small-scale collaboration platforms.
 
 ## Folder Structure
 
+```text
 ProTasker.Api
-|-- Controllers
-| |-- AuthController.cs
-| |-- UsersController.cs
-| |-- TeamsController.cs
-| |-- ProjectTasksController.cs
-| -- TaskHistoriesController.cs |-- Extensions -- MiddleWares
+|-- Controllers           
+|   |-- AuthController.cs
+|   |-- UsersController.cs
+|   |-- TeamsController.cs
+|   |-- ProjectTasksController.cs
+|   `-- TaskHistoriesController.cs
+|-- Extensions            
+`-- Middlewares          
 
 ProTasker.Application
-|-- DTOs
-|-- Exceptions
-|-- Helpers
+|-- DTOs                  
+|-- Exceptions            
+|-- Helpers              
 |-- Interfaces
-| |-- Repositories
-| -- Services |-- Mapping |-- Models |-- Services -- Validators
+|   |-- Repositories
+|   `-- Services
+|-- Mappings              
+|-- Models               
+|-- Services              
+`-- Validators           
 
 ProTasker.Domain
 |-- Entities
@@ -90,7 +103,7 @@ ProTasker.Infrastructure
 |-- Data
 |-- Migrations
 `-- Repositories
-
+```
 ---
 
 ## Technologies Used
@@ -160,7 +173,7 @@ Start the application:
 ```bash
 dotnet run
 ```
-## 5. Access Swagger UI
+### 5. Access Swagger UI
 
 Once the API is running, open your browser and visit:
 
